@@ -650,6 +650,7 @@ export class AngularMultiSelect implements OnInit, ControlValueAccessor, OnChang
             obj["grpTitle"] = true;
             obj[this.settings.labelKey] = x;
             obj[this.settings.groupBy] = x;
+            obj['grpSelectable'] = this.settings.disableGroupSelection;
             obj['selected'] = false;
             obj['list'] = [];
             var cnt = 0;
@@ -756,27 +757,27 @@ export class AngularMultiSelect implements OnInit, ControlValueAccessor, OnChang
 
     }
     selectGroup(item: any) {
-        if (item.selected) {
-            item.selected = false;
-            item.list.forEach((obj: any) => {
-                this.removeSelected(obj);
-            });
-            this.updateGroupInfo(item);
-            this.onGroupSelect.emit(item);
+        if (item.grpSelectable !== true) {
+          if (item.selected) {
+              item.selected = false;
+              item.list.forEach((obj: any) => {
+                  this.removeSelected(obj);
+              });
+              this.updateGroupInfo(item);
+              this.onGroupSelect.emit(item);
+          }
+          else {
+              item.selected = true;
+              item.list.forEach((obj: any) => {
+                  if (!this.isSelected(obj)) {
+                      this.addSelected(obj);
+                  }
+
+              });
+              this.updateGroupInfo(item);
+              this.onGroupDeSelect.emit(item);
+          }
         }
-        else {
-            item.selected = true;
-            item.list.forEach((obj: any) => {
-                if (!this.isSelected(obj)) {
-                    this.addSelected(obj);
-                }
-
-            });
-            this.updateGroupInfo(item);
-            this.onGroupDeSelect.emit(item);
-        }
-
-
     }
     addFilterNewItem() {
         this.onAddFilterNewItem.emit(this.filter);
